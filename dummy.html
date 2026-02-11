@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dummy Page</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="favicon.ico" />
+  </head>
+  <body>
+    <main class="dummy-page">
+      <div class="dummy-card">
+        <h1>Dummy page</h1>
+        <p>You navigated to a placeholder page.</p>
+        <a class="back-link" href="index.html">Back to test page</a>
+      </div>
+    </main>
+    <script>
+      const backLink = document.querySelector(".back-link");
+      if (backLink) {
+        backLink.addEventListener("click", (event) => {
+          event.preventDefault();
+          window.history.back();
+        });
+      }
+    </script>
+  </body>
+</html>

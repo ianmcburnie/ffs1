@@ -867,9 +867,19 @@
     </dialog>
     <script>
       const popovers = Array.from(document.querySelectorAll(".popover"));
+      const submittingPopovers = new WeakSet();
 
       if (popovers.length > 0) {
         const closePopover = (popover) => {
+          const wasOpen = popover.classList.contains("open");
+          const form = popover.querySelector(".filter-form");
+          const isSubmitting = submittingPopovers.has(popover);
+          if (wasOpen && form && !isSubmitting) {
+            form.reset();
+          }
+          if (isSubmitting) {
+            submittingPopovers.delete(popover);
+          }
           const button = popover.querySelector(".popover-button");
           popover.classList.remove("open");
           if (button) {
@@ -998,6 +1008,14 @@
         });
       };
 
+      const syncDefaultCheckedToCurrentState = () => {
+        filterForms.forEach((form) => {
+          form.querySelectorAll("input").forEach((input) => {
+            input.defaultChecked = input.checked;
+          });
+        });
+      };
+
       const updateSortViewLabels = () => {
         const updateLabel = (key, prefix) => {
           const label = document.querySelector(
@@ -1042,6 +1060,7 @@
       };
 
       applyParamsToInputs();
+      syncDefaultCheckedToCurrentState();
       updateSortViewLabels();
       updateCategoryButtonStates();
 
@@ -1062,6 +1081,10 @@
       filterForms.forEach((form) => {
         form.addEventListener("submit", (event) => {
           event.preventDefault();
+          const popover = form.closest(".popover");
+          if (popover) {
+            submittingPopovers.add(popover);
+          }
           const nextParams = new URLSearchParams(window.location.search);
           const inputs = Array.from(form.querySelectorAll("input"));
           const names = [...new Set(inputs.map((input) => input.name))];

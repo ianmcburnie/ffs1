@@ -939,13 +939,6 @@
       const popovers = Array.from(document.querySelectorAll(".popover"));
 
       if (popovers.length > 0) {
-        popovers.forEach((popover) => {
-          const button = popover.querySelector(".popover-button");
-          if (button) {
-            button.setAttribute("aria-haspopup", "menu");
-          }
-        });
-
         const closePopover = (popover) => {
           const button = popover.querySelector(".popover-button");
           popover.classList.remove("open");

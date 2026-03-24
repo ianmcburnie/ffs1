@@ -909,6 +909,10 @@
               closeAll(popover);
               popover.classList.add("open");
               button.setAttribute("aria-expanded", "true");
+              const panel = popover.querySelector(".popover-panel");
+              if (panel) {
+                panel.scrollTop = 0;
+              }
               popover.querySelectorAll(".filter-scroll").forEach((scrollArea) => {
                 scrollArea.scrollTop = 0;
               });
@@ -935,11 +939,30 @@
         });
 
         document.addEventListener("keydown", (event) => {
+          const activeElement = document.activeElement;
+          const activePopover = popovers.find((popover) =>
+            popover.contains(activeElement),
+          );
+          if (
+            (event.key === "ArrowDown" || event.key === "ArrowUp") &&
+            activePopover &&
+            activeElement &&
+            activePopover.contains(activeElement) &&
+            (activeElement.tagName === "A" || activePopover.querySelector(".filter-form"))
+          ) {
+            const scrollContainer =
+              activeElement.closest(".filter-scroll") ||
+              activePopover.querySelector(".filter-scroll") ||
+              activeElement.closest(".popover-panel") ||
+              activePopover.querySelector(".popover-panel");
+            if (scrollContainer) {
+              const delta = event.key === "ArrowDown" ? 40 : -40;
+              scrollContainer.scrollBy({ top: delta });
+            }
+            event.preventDefault();
+            return;
+          }
           if (event.key === "Escape") {
-            const activeElement = document.activeElement;
-            const activePopover = popovers.find((popover) =>
-              popover.contains(activeElement),
-            );
             closeAll();
             if (activePopover) {
               const button = activePopover.querySelector(".popover-button");

@@ -978,6 +978,23 @@
         });
       }
 
+      const ITEM_SHUFFLE_KEY = "shuffleItemsPending";
+      const shuffleItemGrid = () => {
+        const itemGrid = document.querySelector(".item-grid");
+        if (!itemGrid) {
+          return;
+        }
+        const items = Array.from(itemGrid.children);
+        for (let index = items.length - 1; index > 0; index -= 1) {
+          const swapIndex = Math.floor(Math.random() * (index + 1));
+          [items[index], items[swapIndex]] = [items[swapIndex], items[index]];
+        }
+        items.forEach((item) => itemGrid.appendChild(item));
+      };
+      if (window.sessionStorage.getItem(ITEM_SHUFFLE_KEY) === "1") {
+        shuffleItemGrid();
+        window.sessionStorage.removeItem(ITEM_SHUFFLE_KEY);
+      }
 
       const filterForms = Array.from(document.querySelectorAll(".filter-form"));
       const params = new URLSearchParams(window.location.search);
@@ -1126,6 +1143,7 @@
           const filterKey = filterButton?.dataset.filter;
           if (filterKey) {
             window.sessionStorage.setItem("lastFilterKey", filterKey);
+            window.sessionStorage.setItem(ITEM_SHUFFLE_KEY, "1");
           }
           if (filterKey && filterKey !== "sort" && filterKey !== "view") {
             setRandomResultsCount();
@@ -1148,6 +1166,7 @@
         );
         clearFiltersLink.addEventListener("click", () => {
           window.sessionStorage.setItem("lastFilterKey", "clear_filters");
+          window.sessionStorage.setItem(ITEM_SHUFFLE_KEY, "1");
           setRandomResultsCount();
         });
       }
